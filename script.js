@@ -10,6 +10,8 @@ let gif = document.getElementById('gif');
 let masterSongName = document.getElementById('masterSongName');
 let songItems = Array.from(document.getElementsByClassName("songItem"));
 
+let isPlaying = false;
+
 let songs = [
     {songName:"Warriyo - Mortals [NCS Release]" , filePath:"songs/1.mp3", coverPath:"images/covers/1.jpg"},
     {songName:"Cielo - Huma Huma" , filePath:"songs/2.mp3",coverPath:"images/covers/2.jpg"},
@@ -35,18 +37,26 @@ masterPlay.addEventListener('click', ()=>{
         audioElement.play();
         masterPlay.classList.remove('fa-circle-play');
         masterPlay.classList.add('fa-circle-pause');
+        isPlaying = true;
         gif.style.opacity = 1;
     }else{
         audioElement.pause();
         masterPlay.classList.remove('fa-circle-pause');
         masterPlay.classList.add('fa-circle-play');
         gif.style.opacity = 0;
+        isPlaying = false;
+        
+        // adding pause button to each in music list
+        Array.from(document.getElementsByClassName('songItemPlay')).forEach((element)=>{
+            element.classList.add('fa-circle-play');
+            element.classList.remove('fa-circle-pause');
+        })
     }
 })
 
 // Listen to events
 audioElement.addEventListener('timeupdate', ()=>{
-    console.log('timeupdate');
+    // console.log('timeupdate');
 
     // uodate seekbar
     progress = parseInt((audioElement.currentTime/audioElement.duration)*100);
@@ -86,6 +96,39 @@ Array.from(document.getElementsByClassName('songItemPlay')).forEach((element)=>{
 
     })
 })
+
+// adding functionality of switching the audio player off from the music list
+Array.from(document.getElementsByClassName('songItemPlay')).forEach((element)=>{
+    element.addEventListener('click',(e)=>{
+        console.log(e.target);
+        if(isPlaying){
+            audioElement.pause();
+            isPlaying = false;
+            myProgressBar.value = audioElement.currentTime;
+            e.target.classList.add('fa-circle-play');
+            e.target.classList.remove('fa-circle-pause');
+            masterPlay.classList.remove('fa-circle-pause');
+            masterPlay.classList.add('fa-circle-play');
+            gif.style.opacity = 0;
+        }
+        else{
+            audioElement.play();
+            isPlaying = true;
+            e.target.classList.remove('fa-circle-play');
+            e.target.classList.add('fa-circle-pause');
+            masterPlay.classList.remove('fa-circle-play');
+            masterPlay.classList.add('fa-circle-pause');
+
+        }
+        
+
+    })
+})
+
+
+
+
+
 
 document.getElementById('forward').addEventListener('click', ()=>{
     if(songIndex>=8){
